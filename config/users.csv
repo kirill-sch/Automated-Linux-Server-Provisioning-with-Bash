@@ -1,0 +1,3 @@
+firstName,lastName,groups(current fix but after groups there can't be anymore columns) 
+kirill,sch,"[dev,ops]"
+john,wolfe,"[developers,testers]"
