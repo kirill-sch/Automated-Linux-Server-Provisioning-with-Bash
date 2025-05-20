@@ -1,3 +1,6 @@
 makepasswd
 openssh-server
 dos2unix
+docker
+git-all
+curl
