@@ -15,8 +15,8 @@ generate_ssh_key () {
     sudo chmod 700 "/home/$username/.ssh"
 
     cp "output/ssh_keys/$username/$username.pub" "/home/$username/.ssh/authorized_keys"
-    sudo chmod 600 "/home/$username/.ssh/authorized_keys"
-    sudo chown -R "$username":"$username" "/home/$username/.ssh/authorized_keys"
+    sudo chmod 600 "/home/$username/.ssh/authorized_keys"    
+    sudo chown -R "$username":"$username" "/home/$username/.ssh"
 
     shred -u "output/ssh_keys/$username/$username.pub" 
 }
