@@ -30,11 +30,10 @@ setup_user_and_groups () {
     sudo useradd -m -G "$group_list" -s /bin/bash "$username" # -m: creates home dir; -s: login shell
     getent passwd "$username"
 
-    sudo usermod -p "$password" "$username"
+    echo "$username:$password" | sudo chpasswd
     sudo passwd -n 7 "$username" # password can't be changed for given days
     sudo passwd -x 90 "$username" # password remains valid for given days
     sudo passwd -e "$username" # expire password, forced to change password at the next login
 
     generate_file_with_name "$username" "$password"
-
 }
