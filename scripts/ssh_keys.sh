@@ -1,12 +1,18 @@
 # TODO: add passphase protection
-# TODO: path should be in a variable for shorter code
+
 generate_ssh_key () {
-    username=$1
+    username="$1"
 
     echo "Generating ssh key for username: $username"
 
+    usernameCheck=$(getent passwd "$username")
+    if [[ -z "$usernameCheck" ]]; then
+        echo "Can't find username: $username"
+        exit 0
+    fi
+
     mkdir "output/ssh_keys/$username"    
-    ssh-keygen -t rsa -b 2048 -f "output/ssh_keys/$username/$username" -q -N "" # TODO: add passphrase, without passphrase only suitable for testing environment
+    ssh-keygen -t rsa -b 2048 -f "output/ssh_keys/$username/$username" -q -N ""
     ls -l "output/ssh_keys/$username"
 
     sleep 15s
