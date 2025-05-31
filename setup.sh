@@ -1,16 +1,32 @@
 #!/bin/bash
 
 set -x
-#set -e
 
 source ./scripts/user_setup.sh
 source ./scripts/ssh_keys.sh
 source ./scripts/install_packages.sh
+source ./scripts/backup.sh
 
+
+regex_checker () {
+    firstName="$1"
+    lastName="$2"
+    groups="$3"
+
+    for var in "$@"
+    do
+        if [[ ! "$var" =~ ^[A-Za-z]+$ ]]; then
+            echo "Values can't contain special characters: $var"
+            exit 0
+        fi
+    done
+}
 
 reading_data_from_users_file () {
-    #dos2unix config/users.csv  # this might solve the issue that it doesn't read lines further then the first; it might not be needed with the new solution to get the values  
+    selectedOption=$1
     counter=1
+
+    # Extract values from the csv file
     while read line 
     do
         counter=$((counter + 1))
@@ -18,14 +34,39 @@ reading_data_from_users_file () {
         firstName=( $(tail -n +"$counter" config/users.csv | cut -d ',' -f1))
         lastName=( $(tail -n +"$counter" config/users.csv | cut -d ',' -f2))
         groups=( $(tail -n +"$counter" config/users.csv | cut -d ',' -f3- | sed -e 's/\"//g' -e 's/\[//g' -e 's/\]//g' )) # the sed replaces the " and [] characters to nothing
-        username="${firstName}_${lastName}" # TODO: doesn't lowercase, special charachters may cause problems
-        
-        echo "$firstName $lastName $groups $username"
-        
-        #reading_data_from_packages_file
-        setup_user_and_groups "$firstName" "$lastName" "$groups" "$username"
-        generate_ssh_key "$username"
+        username="$(echo "$firstName" | tr '[:upper:]' '[:lower:]')_$(echo "$lastName" | tr '[:upper:]' '[:lower:]')"
+
+        regex_checker "$firstName" "$lastName" "$groups" "$username"  
+
+        if [[ "$selectedOption" == "1" ]]; then
+            setup_user_and_groups "$username" "$groups"
+        else
+            generate_ssh_key "$username"
+        fi
     done < config/users.csv
 }
 
-reading_data_from_users_file
+main () {
+    run="true"
+
+    while [[ "$run" == "true" ]]; do
+        echo "1) Exit"
+        echo "2) Create users"
+        echo "3) Create SSH keys"
+        echo "3) Install packages"
+        echo "4) Backup files"
+
+        read -p "Choose an option: " choice
+
+        case $choice in
+            1) exit 0 ;;
+            2) reading_data_from_users_file 1 ;;
+            3) reading_data_from_users_file 2 ;;
+            4) reading_data_from_packages_file ;;
+            5) create_backup ;;
+            *) echo "Invalid option." ;;
+        esac
+    done
+}
+
+main
