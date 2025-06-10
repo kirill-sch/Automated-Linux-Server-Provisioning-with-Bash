@@ -1,5 +1,3 @@
-# TODO: add passphase protection
-
 generate_ssh_key () {
     username="$1"
 
@@ -13,9 +11,6 @@ generate_ssh_key () {
 
     mkdir "output/ssh_keys/$username"    
     ssh-keygen -t rsa -b 2048 -f "output/ssh_keys/$username/$username" -q -N ""
-    ls -l "output/ssh_keys/$username"
-
-    sleep 15s
 
     mkdir -p "/home/$username/.ssh"
     sudo chmod 700 "/home/$username/.ssh"
