@@ -9,14 +9,10 @@ source ./scripts/backup.sh
 
 
 regex_checker () {
-    firstName="$1"
-    lastName="$2"
-    groups="$3"
-
     for var in "$@"
     do
         if [[ ! "$var" =~ ^[A-Za-z]+$ ]]; then
-            echo "Values can't contain special characters: $var"
+            echo "first and last name can only contain alphabetic characters: $var"
             exit 0
         fi
     done
@@ -36,7 +32,7 @@ reading_data_from_users_file () {
         groups=( $(tail -n +"$counter" config/users.csv | cut -d ',' -f3- | sed -e 's/\"//g' -e 's/\[//g' -e 's/\]//g' )) # the sed replaces the " and [] characters to nothing
         username="$(echo "$firstName" | tr '[:upper:]' '[:lower:]')_$(echo "$lastName" | tr '[:upper:]' '[:lower:]')"
 
-        regex_checker "$firstName" "$lastName" "$groups" "$username"  
+        regex_checker "$firstName" "$lastName"  
 
         if [[ "$selectedOption" == "1" ]]; then
             setup_user_and_groups "$username" "$groups"
@@ -53,8 +49,8 @@ main () {
         echo "1) Exit"
         echo "2) Create users"
         echo "3) Create SSH keys"
-        echo "3) Install packages"
-        echo "4) Backup files"
+        echo "4) Install packages"
+        echo "5) Backup files"
 
         read -p "Choose an option: " choice
 
