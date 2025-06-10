@@ -10,7 +10,12 @@ group_create () {
 
         if [[ -n "$output" ]]; then 
             continue
-        else 
+        else
+            if [[ ! "$i" =~ ^[A-Za-z]+$ ]]; then
+            echo "group names can only contain alphabetic characters: $i"
+            exit 0
+            fi
+              
             echo "Creating group: $i"
             sudo addgroup "$i"   
         fi
